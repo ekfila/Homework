@@ -127,11 +127,13 @@ print(number1, number2)
 
 
 //c
-//infix operator <*
-//func <* <T>(_ myController: T, _ tableView: UITableView) where T: UIViewController, UITableViewDelegate? {
-//    tableView.delegate = myController
-//}
-//Как это делается?
+infix operator <*
+func <* (_ myController: UITableViewDelegate, _ tableView: UITableView) {
+    tableView.delegate = myController
+}
+let controller = UITableViewController()
+let tableView = UITableView()
+controller <* tableView
 
 
 //d

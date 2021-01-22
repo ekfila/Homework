@@ -18,14 +18,14 @@ func maxOf<T: Comparable>(_ x: T, _ y: T) {
 maxOf(7, 5)
 
 //c
-func sortTwo<T: Comparable>(_ x: inout T, _ y: inout T) {
+func swapIfAGreaterThanB<T: Comparable>(_ x: inout T, _ y: inout T) {
     if x > y {
         swap(&x, &y)
     }
 }
 var a = 4
 var b = 5
-sortTwo(&b, &a)
+swapIfAGreaterThanB(&b, &a)
 a
 b
 
@@ -52,7 +52,11 @@ jointFunction(3)
 //7.
 //a
 extension Array where Element: Comparable{
-    var maxElement: Element {
+    var maxElement: Element? {
+        //precondition(self.count > 0)
+        if self.count == 0 {
+            return nil
+        }
         var result = self[0]
         for item in self {
             if item > result {
@@ -64,13 +68,16 @@ extension Array where Element: Comparable{
 }
 
 let arr = [7, 4, 6, 0, -4, -10]
-print("max in this array is \(arr.maxElement)")
+print("max in this array is \(arr.maxElement!)")
+
+let arr1: [Int] = []
+arr1.maxElement
 
 //b
 extension Array where Element: Equatable {
-    func withoutIdentical() -> Array<Element> {
+    func unique() -> Array<Element> {
         var newArray = Array<Element>()
-        if self.count > 1 {
+        if self.count > 0 {
             for item in self {
                 var add = true
                 if newArray.count > 0 {
@@ -90,30 +97,40 @@ extension Array where Element: Equatable {
 }
 
 var anotherArr = [-5, 3, 2, 0, 3, 0, 2, 4, 3, 5, 5, 6]
-print(anotherArr.withoutIdentical())
+print(anotherArr.unique())
+
+var arr2 = [-5]
+print(arr2.unique())
 
 //8.
 //a
-infix operator ^^: MultiplicationPrecedence
+precedencegroup PowerPrecedence {
+    higherThan: MultiplicationPrecedence
+    associativity: right
+}
+
+infix operator ^^: PowerPrecedence
 func ^^(_ x: Int, _ y: Int) -> Double {
-    precondition(x != 0)
+    precondition(x != 0 || y >= 0)
     if y == 0 {
         return 1
     } else if y > 0 {
-        var result = 1.0
-        for _ in 1 ... y {
-            result *= Double(x)
+        var result = 1
+        var remainingDegree = y
+        var toSquare = x
+        while remainingDegree > 0 {
+            if remainingDegree % 2 == 1 {
+                result *= toSquare
+            }
+            remainingDegree /= 2
+            toSquare *= toSquare
         }
-        return result
+        return Double(result)
     } else {
-        var result = 1.0
-        for _ in 1 ... -y {
-            result /= Double(x)
-        }
-        return result
+        return 1 / x ^^ (-y)
     }
 }
-print(5^^2, (-5)^^3, 5^^(-2), (-5)^^(-2), 5^^0)
+print(5^^4, (-5)^^3, 5^^(-2), (-5)^^(-2), 5^^0, 0^^2, 0^^0)
 
 //b
 infix operator ~>
